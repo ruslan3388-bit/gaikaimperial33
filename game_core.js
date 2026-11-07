@@ -65,8 +65,8 @@ function buy(s,type){
 }
 function tap(s){const gain=tapPower(s);addMoney(s,gain);return gain;}
 function sell(s,resource,quantity){
- const available=s.resources[resource];
- if(!BASE_PRICES[resource]||!Number.isInteger(quantity)||quantity<1||available<quantity)return false;
+ if(!Object.hasOwn(BASE_PRICES,resource)||!Object.hasOwn(s.resources,resource)||!Number.isInteger(quantity)||quantity<1)return false;
+ const available=s.resources[resource];if(available<quantity)return false;
  const gain=prices(s)[resource]*quantity;s.resources[resource]-=quantity;addMoney(s,gain);
  s.log.unshift(`Продано ${quantity} ${resourceName(resource)} за ${gain} гаек.`);s.log=s.log.slice(0,6);return true;
 }

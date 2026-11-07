@@ -48,6 +48,29 @@ test('Telegram initData is verified, tampering and stale signatures are rejected
   assert.throws(() => validateTelegramInitData(signedInitData(userData, NOW - 25 * 60 * 60 * 1000), BOT_TOKEN, NOW), /устар/i);
 });
 
+test('an action uses the UTC season current after acquiring the database write lock', () => {
+  let now = Date.UTC(2026, 10, 30, 23, 59, 59, 900);
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => now });
+  service.act(user, { actionId: 'nov-action-0001', type: 'tap' });
+  const realExec = db.exec.bind(db);
+  let rollMonthAtNextLock = true;
+  db.exec = sql => {
+    if (rollMonthAtNextLock && sql === 'BEGIN IMMEDIATE') {
+      now = Date.UTC(2026, 11, 1, 0, 0, 0, 100);
+      rollMonthAtNextLock = false;
+    }
+    return realExec(sql);
+  };
+  const result = service.act(user, { actionId: 'dec-action-0001', type: 'tap' });
+  const previousSeasonReceipts = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ?').get('2026-11').count;
+  const currentSeasonReceipts = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ?').get('2026-12').count;
+  assert.equal(result.season.id, '2026-12');
+  assert.equal(previousSeasonReceipts, 0);
+  assert.equal(currentSeasonReceipts, 1);
+  db.close();
+});
+
 test('season windows use UTC calendar months', () => {
   assert.deepEqual(seasonWindow(Date.UTC(2026, 10, 7)), {
     id: '2026-11', startsAt: Date.UTC(2026, 10, 1), endsAt: Date.UTC(2026, 11, 1)
@@ -100,6 +123,31 @@ test('only server-accepted deliveries score, and retries are idempotent', () => 
   db.close();
 });
 
+test('duplicate action replay does not grant offline income a second time', () => {
+  let now = NOW;
+  const { db, service } = fixture({ clock: () => now, game: gameWith({ lathe: 1 }) });
+  const action = { actionId: 'offline-replay-01', type: 'tap' };
+  const accepted = service.act(user, action);
+  now += 1000;
+  const replayed = service.act(user, action);
+  assert.equal(replayed.state.money, accepted.state.money);
+  assert.equal(replayed.state.tickCount, accepted.state.tickCount);
+  const resumed = service.getState(user);
+  assert.equal(resumed.state.money, accepted.state.money + 0.5);
+  assert.equal(resumed.state.tickCount, accepted.state.tickCount + 1);
+  db.close();
+});
+
+test('client-controlled prototype resource names cannot corrupt league state', () => {
+  const { db, service } = fixture();
+  const before = service.getState(user).state;
+  assert.throws(() => service.act(user, {
+    actionId: 'invalid-sell-01', type: 'sell', resource: 'toString', quantity: 1
+  }), error => error.status === 409);
+  assert.deepEqual(service.getState(user).state, before);
+  db.close();
+});
+
 test('league order requirements and rewards progress on the server, not client input', () => {
   const { db, service } = fixture({ game: gameWith({ parts: 8 }) });
   const first = service.act(user, { actionId: 'order-0001', type: 'deliver', orderIndex: 99 });
@@ -142,6 +190,69 @@ test('same-millisecond deliveries still preserve server acceptance order in tie-
   service.act(secondUser, { actionId: 'second-order-1', type: 'deliver' });
   assert.equal(service.getState(firstUser).league.rank, 1);
   assert.equal(service.getState(secondUser).league.rank, 2);
+  db.close();
+});
+
+test('expired action receipts are removed while processing a later action', () => {
+  let now = NOW;
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => now, receiptTtlMs: 1000 });
+  service.act(user, { actionId: 'expires-0001', type: 'tap' });
+  now += 1001;
+  service.act(user, { actionId: 'expires-0002', type: 'tap' });
+  const oldReceipt = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE action_id = ?').get('expires-0001').count;
+  const currentReceipt = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE action_id = ?').get('expires-0002').count;
+  assert.equal(oldReceipt, 0);
+  assert.equal(currentReceipt, 1);
+  db.close();
+});
+
+test('action receipts are compact and capped per player', () => {
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => NOW, maxActionReceiptsPerUser: 2 });
+  for (const actionId of ['receipt-0001', 'receipt-0002', 'receipt-0003']) {
+    service.act(user, { actionId, type: 'tap' });
+  }
+  const count = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ? AND telegram_id = ?').get('2026-11', user.id).count;
+  const maxBytes = db.prepare('SELECT MAX(length(response_json)) AS bytes FROM action_receipts WHERE season_id = ? AND telegram_id = ?').get('2026-11', user.id).bytes;
+  const oldest = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE action_id = ?').get('receipt-0001').count;
+  assert.equal(count, 2);
+  assert.equal(maxBytes, 2);
+  assert.equal(oldest, 0);
+  db.close();
+});
+
+test('replayed action IDs still consume request-rate tokens', () => {
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => NOW, rateLimitPerMinute: 60, rateLimitBurst: 2 });
+  const action = { actionId: 'same-replay-id-01', type: 'tap' };
+  assert.equal(service.act(user, action).state.money, 1);
+  assert.equal(service.act(user, action).state.money, 1);
+  assert.throws(() => service.act(user, action), error => error.status === 429);
+  assert.equal(service.getState(user).state.money, 1);
+  db.close();
+});
+
+test('startup enforces the per-player receipt cap for existing databases', () => {
+  const db = new DatabaseSync(':memory:');
+  const seedService = createLeagueService({ db, clock: () => NOW, maxActionReceiptsPerUser: 5 });
+  for (let i = 1; i <= 5; i++) seedService.act(user, { actionId: `startup-receipt-${String(i).padStart(2, '0')}`, type: 'tap' });
+  createLeagueService({ db, clock: () => NOW, maxActionReceiptsPerUser: 2 });
+  const count = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ? AND telegram_id = ?').get('2026-11', user.id).count;
+  assert.equal(count, 2);
+  db.close();
+});
+
+test('server token bucket limits rapid actions per player', () => {
+  let now = NOW;
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => now, rateLimitPerMinute: 60, rateLimitBurst: 2 });
+  const act = actionId => service.act(user, { actionId, type: 'tap' });
+  assert.equal(act('rate-limit-0001').state.money, 1);
+  assert.equal(act('rate-limit-0002').state.money, 2);
+  assert.throws(() => act('rate-limit-0003'), error => error.status === 429);
+  now += 1000;
+  assert.equal(act('rate-limit-0004').state.money, 3);
   db.close();
 });
 

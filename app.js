@@ -9,7 +9,11 @@ let leagueMode=false;
 let leagueSnapshot=null;
 let leagueError='';
 let leagueBusy=false;
+let leagueJoinPending=false;
 let lastLeagueRefresh=0;
+let leagueActionRevision=0;
+let leagueRefreshSequence=0;
+let latestAppliedLeagueRefresh=0;
 let actionQueue=Promise.resolve();
 let toastTimer;
 function loadState(){try{const x=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(x&&x.version===2&&x.resources&&x.idleOwned&&x.buildings)return x;}catch(_){}return Game.newGame();}
@@ -27,7 +31,7 @@ function updateLeaguePanel(){
  else if(leagueMode)status.textContent='Лиговый завод синхронизируется с сервером. Локальные сохранения одиночной игры не меняются.';
  else if(data)status.textContent='Сезон загружен. Войди в лигу, чтобы играть отдельным заводом и попасть в рейтинг.';
  else status.textContent='Подключись, чтобы загрузить сезон и таблицу лидеров.';
- connect.disabled=!LEAGUE_API_URL||!telegramInitData()||leagueBusy||leagueMode;connect.hidden=leagueMode;exit.hidden=!leagueMode;
+ connect.disabled=!LEAGUE_API_URL||!telegramInitData()||leagueBusy||leagueJoinPending||leagueMode;connect.hidden=leagueMode;exit.hidden=!leagueMode;exit.disabled=leagueBusy;
  const board=$('league-board');board.replaceChildren();
  if(!data){$('league-season').textContent='—';$('league-rank').textContent='—';$('league-points').textContent='0';$('league-deliveries').textContent='0';return;}
  const {season,league}=data,days=Math.max(0,Math.ceil((season.endsAt-Date.now())/86400000));
@@ -44,17 +48,24 @@ async function leagueRequest(path,options={}){
  if(!response.ok)throw new Error(payload.error||`ошибка сервера (${response.status})`);return payload;
 }
 async function refreshLeague({join=false}={}){
- if(!LEAGUE_API_URL||!telegramInitData()||leagueBusy){updateLeaguePanel();return null;}
- try{leagueError='';const result=await leagueRequest('/api/league/state');leagueSnapshot=result;lastLeagueRefresh=Date.now();
-  if(join){leagueMode=true;state=result.state;running=true;notify('Лиговый завод загружен с сервера');}else if(leagueMode)state=result.state;
+ if(!LEAGUE_API_URL||!telegramInitData()||leagueBusy||leagueJoinPending){updateLeaguePanel();return null;}
+ if(join){leagueJoinPending=true;updateLeaguePanel();}
+ const refreshSequence=++leagueRefreshSequence,actionRevision=leagueActionRevision;
+ try{leagueError='';const result=await leagueRequest('/api/league/state');
+  const isLatestRequest=refreshSequence===leagueRefreshSequence,canApplySnapshot=isLatestRequest&&refreshSequence>=latestAppliedLeagueRefresh;
+  if(actionRevision!==leagueActionRevision||!canApplySnapshot)return null;
+  latestAppliedLeagueRefresh=refreshSequence;leagueSnapshot=result;lastLeagueRefresh=Date.now();leagueError='';
+  if(join){leagueMode=true;state=result.state;running=true;notify('Лиговый завод загружен с сервера');}
+  else if(leagueMode)state=result.state;
   updateLeaguePanel();if(leagueMode)render();return result;
- }catch(error){leagueError=error.message;updateLeaguePanel();if(join)notify(`Лига недоступна: ${error.message}`);return null;}
+ }catch(error){if(actionRevision!==leagueActionRevision||refreshSequence<latestAppliedLeagueRefresh||refreshSequence<leagueRefreshSequence)return null;leagueError=error.message;updateLeaguePanel();if(join)notify(`Лига недоступна: ${error.message}`);return null;}
+ finally{if(join){leagueJoinPending=false;updateLeaguePanel();}}
 }
 function createActionId(){if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID();return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,14)}`;}
 function sendLeagueAction(action){
- const task=actionQueue.then(async()=>{if(!leagueMode)return false;leagueBusy=true;updateLeaguePanel();render();
+ const task=actionQueue.then(async()=>{if(!leagueMode)return false;leagueActionRevision++;leagueBusy=true;updateLeaguePanel();render();
   try{const result=await leagueRequest('/api/league/action',{method:'POST',body:JSON.stringify({...action,actionId:createActionId()})});
-   leagueSnapshot=result;state=result.state;leagueError='';lastLeagueRefresh=Date.now();updateLeaguePanel();render();return true;
+   leagueSnapshot=result;if(leagueMode)state=result.state;leagueError='';lastLeagueRefresh=Date.now();updateLeaguePanel();render();return true;
   }catch(error){leagueError=error.message;updateLeaguePanel();notify(`Действие не принято: ${error.message}`);return false;}
   finally{leagueBusy=false;updateLeaguePanel();render();}
  });actionQueue=task.catch(()=>{});return task;
@@ -119,7 +130,7 @@ $('contract-button').addEventListener('click',()=>{
  if(Game.deliverContract(state)){notify('Заказ отгружен · репутация +1');render();}
 });
 $('league-connect').addEventListener('click',()=>refreshLeague({join:true}));
-$('league-exit').addEventListener('click',()=>{leagueMode=false;state=soloState;running=true;leagueError='';render();updateLeaguePanel();notify('Вернулись к одиночному заводу');});
+$('league-exit').addEventListener('click',()=>{if(leagueBusy)return;leagueMode=false;state=soloState;running=true;leagueError='';render();updateLeaguePanel();notify('Вернулись к одиночному заводу');});
 $('pause').addEventListener('click',()=>{running=!running;$('pause').textContent=running?'Ⅱ ПАУЗА':'▶ СТАРТ';notify(running?'Производство запущено':'Производство остановлено');});
 $('reset').addEventListener('click',()=>{if(leagueMode)return;if(confirm('Сбросить прогресс и начать заново?')){soloState=Game.newGame();state=soloState;running=true;render();notify('Новый завод готов');}});
 $('help').addEventListener('click',()=>notify('Тапай гайку → покупай автоматы → строй цепочку → продавай или отгружай заказ.'));
