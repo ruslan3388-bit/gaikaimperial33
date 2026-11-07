@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#111813">
+<title>Гайка империи — промышленная стратегия</title>
+<script src="https://telegram.org/js/telegram-web-app.js?64"></script>
+<style>
+:root{color-scheme:dark;--bg:#101612;--panel:#1a231d;--panel-hi:#222e26;--line:#344137;--text:#f0f2e9;--mute:#9ba69b;--lime:#d5ef71;--amber:#f2b64c;--rust:#d47646;--red:#ea725e;--green:#73d095;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--sans:Arial,Helvetica,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -18%,#324137 0,transparent 52%),var(--bg);color:var(--text);font-family:var(--sans);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}button{font:inherit;color:inherit;cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}.wrap{max-width:760px;margin:auto;padding:14px 14px 36px}.top{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 14px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px}.brand-mark{height:40px;width:40px;border:1px solid var(--lime);display:grid;place-items:center;color:var(--lime);font-size:23px;border-radius:10px;box-shadow:0 0 20px #d5ef7118}.brand-kicker{font:700 9px var(--mono);letter-spacing:.18em;color:var(--mute)}.brand-name{font-weight:900;font-size:17px;letter-spacing:.045em;margin-top:2px}.top-right{display:flex;gap:7px}.small-btn{background:transparent;border:1px solid var(--line);color:var(--mute);border-radius:8px;padding:9px 10px;font:700 10px var(--mono)}.hero{display:flex;justify-content:space-between;align-items:end;padding:23px 3px 13px;gap:10px}.eyebrow{color:var(--lime);font:700 10px var(--mono);letter-spacing:.14em}.hero h1{font-size:clamp(27px,7vw,42px);line-height:.96;letter-spacing:-.045em;margin:9px 0 8px}.hero p{color:var(--mute);font-size:12px;line-height:1.5;margin:0;max-width:440px}.daybox{border:1px solid var(--line);border-radius:9px;padding:9px 12px;text-align:right;min-width:74px}.daybox span{display:block;color:var(--mute);font:9px var(--mono);letter-spacing:.1em}.daybox b{display:block;color:var(--lime);font:700 23px var(--mono);margin-top:3px}.stats{display:grid;grid-template-columns:1.2fr 1fr .95fr;gap:7px;margin:8px 0 13px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px;min-width:0}.stat label{display:block;color:var(--mute);font:9px var(--mono);letter-spacing:.12em}.stat strong{display:block;margin-top:6px;font:700 clamp(14px,4vw,20px) var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stat.balance strong{color:var(--amber)}.powerbar{height:4px;background:#344137;margin-top:8px;border-radius:4px;overflow:hidden}.powerbar i{height:100%;display:block;background:var(--lime);transition:width .3s}.powerbar i.over{background:var(--red)}.tap-area{background:linear-gradient(130deg,#273329,#18211b);border:1px solid #4a5a48;border-radius:14px;padding:15px 17px;display:flex;align-items:center;gap:15px;position:relative;overflow:hidden}.tap-area:after{content:'';position:absolute;right:-35px;top:-80px;width:210px;height:210px;border:1px solid #d5ef711e;border-radius:50%;box-shadow:0 0 0 20px #d5ef7107,0 0 0 44px #d5ef7105}.nut-button{width:86px;height:86px;flex:0 0 86px;border:1px solid #edcf83;background:radial-gradient(circle at 35% 25%,#ffe59e,#d78b39 58%,#78491f);border-radius:25px;display:grid;place-items:center;box-shadow:0 8px 0 #573518,0 14px 26px #0008;touch-action:manipulation;position:relative;z-index:1;transition:transform .08s,box-shadow .08s}.nut-button:active{transform:translateY(5px) rotate(5deg) scale(.96);box-shadow:0 3px 0 #573518,0 6px 15px #0008}.nut-svg{width:57px;height:57px;filter:drop-shadow(0 2px 2px #714315);transition:transform .08s}.tap-copy{position:relative;z-index:1}.tap-copy label{display:block;color:var(--lime);font:700 9px var(--mono);letter-spacing:.14em}.tap-copy strong{display:block;font-size:16px;margin:6px 0 4px}.tap-copy p{margin:0;color:var(--mute);font-size:11px;line-height:1.4}.tap-copy .tap-count{font:700 11px var(--mono);color:var(--amber);margin-top:6px}.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:14px 0 14px;overflow:auto}.tab{border:0;background:transparent;color:var(--mute);padding:11px 12px 10px;font:700 10px var(--mono);letter-spacing:.06em;border-bottom:2px solid transparent;white-space:nowrap}.tab.selected{color:var(--lime);border-color:var(--lime)}.panel.hidden{display:none}.head{display:flex;justify-content:space-between;align-items:center;margin:17px 1px 9px;gap:8px}.head h2{font:700 11px var(--mono);letter-spacing:.12em;margin:0}.head span{font:9px var(--mono);color:var(--mute)}.status{display:inline-flex;align-items:center;gap:6px;color:var(--green);font:700 9px var(--mono)}.status.warn{color:var(--red)}.dot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}.chain{display:grid;grid-template-columns:1fr 18px 1fr 18px 1fr;align-items:center;gap:4px;margin:9px 0 13px}.machine-node{background:linear-gradient(145deg,#202c23,#161d18);border:1px solid var(--line);border-radius:10px;min-height:90px;padding:10px 8px;position:relative;overflow:hidden}.machine-node:after{content:'';position:absolute;right:-19px;bottom:-28px;width:55px;height:55px;border:1px solid #8190762b;border-radius:50%}.machine-node b{display:block;color:var(--lime);font:700 17px var(--mono)}.machine-node strong{display:block;font-size:10px;margin:7px 0 3px}.machine-node small{font:9px var(--mono);color:var(--mute)}.arrow{text-align:center;color:var(--amber);font:19px var(--mono)}.stock{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stock-item{background:#151c17;border:1px solid var(--line);border-radius:9px;padding:10px}.stock-item label{font:9px var(--mono);letter-spacing:.08em;color:var(--mute)}.stock-item b{display:block;font:700 19px var(--mono);margin-top:5px}.stock-item small{display:block;color:var(--lime);font:9px var(--mono);margin-top:4px}.buildings{display:grid;grid-template-columns:1fr 1fr;gap:7px}.build-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px;display:flex;justify-content:space-between;align-items:center;gap:7px}.build-card h3{font-size:11px;margin:0 0 5px}.build-card p{font:9px/1.4 var(--mono);color:var(--mute);margin:0}.owned{display:block;color:var(--lime);font:700 9px var(--mono);margin-top:6px}.buy{background:var(--lime);color:#1b2417;border:0;border-radius:7px;padding:8px 8px;min-width:67px;font:700 9px var(--mono);white-space:nowrap}.cost{display:block;font-size:9px;margin-top:3px}.order{background:#242318;border:1px solid #5a4e32;border-radius:10px;padding:13px;margin:9px 0}.order-top{display:flex;justify-content:space-between;gap:9px}.order h3{font-size:11px;margin:0}.reward{color:var(--lime);font:700 10px var(--mono);white-space:nowrap}.order p{font-size:10px;line-height:1.45;color:var(--mute);margin:7px 0 10px}.order-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}.order-foot small{font:9px var(--mono);color:var(--amber)}.primary{background:var(--amber);color:#241a0c;border:0;border-radius:7px;padding:9px 11px;font:700 9px var(--mono)}.market-list{display:grid;gap:7px}.market-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:11px}.market-row strong{font-size:11px}.market-row small{display:block;color:var(--mute);font:9px var(--mono);margin-top:4px}.market-row .price{color:var(--lime);font:700 10px var(--mono)}.market-actions{display:flex;gap:4px;grid-column:1/-1;justify-content:flex-end}.market-actions button{background:var(--panel-hi);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:700 9px var(--mono)}.idle-list{display:grid;gap:8px}.idle-card{display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px}.idle-icon{height:42px;width:42px;display:grid;place-items:center;background:#28352a;border:1px solid #495c42;border-radius:10px;font-size:22px}.idle-card h3{font-size:11px;margin:0 0 4px}.idle-card p{font:9px/1.45 var(--mono);color:var(--mute);margin:0}.research{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:9px 0}.research h3{font-size:12px;margin:0 0 7px}.research p{font-size:10px;line-height:1.5;color:var(--mute);margin:0 0 12px}.feed{list-style:none;margin:0;padding:0}.feed li{border-left:1px solid var(--line);margin-left:4px;padding:8px 10px;color:var(--mute);font-size:10px;line-height:1.4}.feed li:first-child{color:var(--text)}.foot{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:18px;padding-top:12px;color:#778279;font:8px var(--mono);letter-spacing:.05em}.save-actions{display:flex;gap:6px;align-items:center}.toast{position:fixed;z-index:10;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,14px);opacity:0;pointer-events:none;background:#e8f2d8;color:#1b2417;border-radius:9px;padding:11px 15px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 12px 32px #0009;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}.float{position:absolute;color:#fff6cf;font:700 15px var(--mono);pointer-events:none;animation:floatUp .7s ease-out forwards}@keyframes floatUp{to{transform:translateY(-45px);opacity:0}}@media(max-width:420px){.wrap{padding:11px 10px 28px}.hero{padding-top:20px}.tap-area{padding:12px;gap:12px}.nut-button{width:72px;height:72px;flex-basis:72px}.nut-svg{width:49px;height:49px}.machine-node{padding:8px 6px}.machine-node b{font-size:15px}.machine-node strong{font-size:9px}.machine-node small{font-size:8px}.build-card{padding:9px}.buy{min-width:61px}.stats{gap:5px}.stat{padding:9px}}
+</style></head>
+<body><div class="wrap">
+<header class="top"><div class="brand"><div class="brand-mark">⚙</div><div><div class="brand-kicker">КЛИКЕР × ПРОИЗВОДСТВО</div><div class="brand-name">ГАЙКА ИМПЕРИИ</div></div></div><div class="top-right"><button class="small-btn" id="help">? ПРАВИЛА</button><button class="small-btn" id="pause">Ⅱ ПАУЗА</button></div></header>
+<section class="hero"><div><div class="eyebrow">ОТ ОДНОЙ ГАЙКИ — К ЗАВОДСКОЙ ИМПЕРИИ</div><h1>Смена<br>началась.</h1><p>Тапай, запускай автоматы, строй производственные цепочки и выполняй заказы.</p></div><div class="daybox"><span>ДЕНЬ</span><b id="day">01</b></div></section>
+<section class="stats"><div class="stat balance"><label>КАПИТАЛ</label><strong id="money">0 гаек</strong></div><div class="stat"><label>АВТОДОХОД / СЕК</label><strong id="rate">0 гаек/с</strong></div><div class="stat"><label>ЭНЕРГОСЕТЬ</label><strong id="power-label">3 / 5 МВт</strong><div class="powerbar"><i id="power-fill"></i></div></div></section>
+<section class="tap-area"><button class="nut-button" id="bigNut" aria-label="Нажми, чтобы заработать гайки"><svg class="nut-svg" viewBox="0 0 100 100" aria-hidden="true"><path fill="#f6d886" fill-rule="evenodd" d="M50 5 88 27v46L50 95 12 73V27L50 5Zm0 27a18 18 0 1 0 0 36 18 18 0 0 0 0-36Z"/><circle cx="50" cy="50" r="11" fill="#986129" opacity=".72"/><path d="m50 9 33 19M17 29v40m33 26 33-19" stroke="#fff0bb" stroke-width="3" opacity=".5"/></svg></button><div class="tap-copy"><label>РУЧНОЕ ПРОИЗВОДСТВО</label><strong id="tapPower">+1 ед. руды за тап</strong><p>Нажми на гайку. Купи автоматы, чтобы доход шёл сам.</p><div class="tap-count">ВСЕГО ЗАРАБОТАНО: <span id="lifetime">0</span></div></div></section>
+<nav class="tabs"><button class="tab selected" data-tab="factory">ЗАВОД</button><button class="tab" data-tab="market">РЫНОК</button><button class="tab" data-tab="idle">АВТОМАТЫ</button><button class="tab" data-tab="research">ТЕХНОЛОГИИ</button></nav>
+<main id="panel-factory" class="panel"><div class="head"><h2>ПРОИЗВОДСТВЕННАЯ ЦЕПОЧКА</h2><span id="status" class="status"><i class="dot"></i>РАБОТАЕТ</span></div>
+<div class="chain"><div class="machine-node"><b id="mine-count">1</b><strong>РУДНИК</strong><small>руда / цикл</small></div><div class="arrow">›</div><div class="machine-node"><b id="smelter-count">1</b><strong>ПЛАВИЛКА</strong><small>2 → 1 сталь</small></div><div class="arrow">›</div><div class="machine-node"><b id="workshop-count">0</b><strong>МЕХЦЕХ</strong><small>2 → 1 деталь</small></div></div>
+<div class="head"><h2>СКЛАД И РЫНОК</h2><span>ПРОДАЖА ФИНАНСИРУЕТ РОСТ</span></div><div class="stock"><div class="stock-item"><label>РУДА</label><b id="ore">10</b><small id="ore-price">8 гаек / шт</small></div><div class="stock-item"><label>СТАЛЬ</label><b id="steel">5</b><small id="steel-price">32 гайки / шт</small></div><div class="stock-item"><label>ДЕТАЛИ</label><b id="parts">0</b><small id="parts-price">92 гайки / шт</small></div></div>
+<div class="head"><h2>СТРОИТЕЛЬСТВО</h2><span>РАСШИРЯЙ МОЩНОСТЬ</span></div><div class="buildings">
+<div class="build-card"><div><h3>Рудник</h3><p>+2 руды за цикл<br>1 МВт</p><span class="owned">ПОСТРОЕНО: <b id="mine-count-copy">1</b></span></div><button class="buy" data-cost="mine">СТРОИТЬ<span class="cost"></span></button></div>
+<div class="build-card"><div><h3>Плавильная печь</h3><p>2 руды → 1 сталь<br>2 МВт</p><span class="owned">ПОСТРОЕНО: <b id="smelter-count-copy">1</b></span></div><button class="buy" data-cost="smelter">СТРОИТЬ<span class="cost"></span></button></div>
+<div class="build-card"><div><h3>Мехцех</h3><p>2 стали → 1 деталь<br>2 МВт</p><span class="owned">ПОСТРОЕНО: <b id="workshop-count-copy">0</b></span></div><button class="buy" data-cost="workshop">СТРОИТЬ<span class="cost"></span></button></div>
+<div class="build-card"><div><h3>Электростанция</h3><p>+6 МВт к лимиту сети</p><span class="owned">ПОСТРОЕНО: <b id="power-count">0</b></span></div><button class="buy" data-cost="power">СТРОИТЬ<span class="cost"></span></button></div></div>
+<div class="head"><h2>ЗАКАЗ РЕМОНТНОГО ДЕПО</h2><span id="contract-number">№ 001</span></div><div class="order"><div class="order-top"><h3 id="contract-title">Отгрузи 3 детали</h3><span class="reward" id="contract-reward">+520 гаек</span></div><p>Заказы растут вместе с заводом: больше деталей — выше оплата и репутация.</p><p style="font:9px var(--mono);color:var(--mute);margin:0 0 9px">РЕПУТАЦИЯ <b id="rep">0</b> · ЗАКАЗЫ <b id="deliveries">0</b></p><div class="order-foot"><small id="contract-ready">Нужно ещё 3 детали</small><button class="primary" id="contract-button">ОТГРУЗИТЬ</button></div></div>
+<div class="head"><h2>ЖУРНАЛ СМЕНЫ</h2><span>СОХРАНЕНИЕ АВТОМАТИЧЕСКОЕ</span></div><ul class="feed" id="log"></ul></main>
+<section id="panel-market" class="panel hidden"><div class="head"><h2>ТОРГОВАЯ ПЛОЩАДКА</h2><span>ЦЕНЫ КОЛЕБЛЮТСЯ</span></div><p style="color:var(--mute);font-size:11px;line-height:1.5">Продавай часть складских запасов, чтобы строить новые цеха. Оставь сырьё для своей цепочки.</p><div class="market-list">
+<div class="market-row"><div><strong>Руда</strong><small>На складе: <span id="ore-market">10</span></small></div><span class="price" id="ore-price-market">8 гаек</span><div class="market-actions"><button data-sell="ore" data-amount="1">−1</button><button data-sell="ore" data-amount="5">−5</button><button data-sell="ore" data-amount="max">ВСЁ</button></div></div>
+<div class="market-row"><div><strong>Сталь</strong><small>На складе: <span id="steel-market">5</span></small></div><span class="price" id="steel-price-market">32 гайки</span><div class="market-actions"><button data-sell="steel" data-amount="1">−1</button><button data-sell="steel" data-amount="5">−5</button><button data-sell="steel" data-amount="max">ВСЁ</button></div></div>
+<div class="market-row"><div><strong>Детали</strong><small>На складе: <span id="parts-market">0</span></small></div><span class="price" id="parts-price-market">92 гайки</span><div class="market-actions"><button data-sell="parts" data-amount="1">−1</button><button data-sell="parts" data-amount="5">−5</button><button data-sell="parts" data-amount="max">ВСЁ</button></div></div></div></section>
+<section id="panel-idle" class="panel hidden"><div class="head"><h2>АВТОМАТИЧЕСКОЕ ПРОИЗВОДСТВО</h2><span>ЦЕНА РАСТЁТ С ПОКУПКАМИ</span></div><p style="color:var(--mute);font-size:11px;line-height:1.5">Купи оборудование за гайки. Пассивный доход идёт и во время отсутствия — до 8 часов; конвейер усиливает доход и выпуск.</p><div class="idle-list">
+<div class="idle-card"><div class="idle-icon">🔧</div><div><h3>Ручной пресс «Крутила»</h3><p>+1 ед. руды за тап · усиливает добычу</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="press">0</b></span></div><button class="buy" data-cost="press">КУПИТЬ<span class="cost"></span></button></div>
+<div class="idle-card"><div class="idle-icon">⚙️</div><div><h3>Токарный «Вжух-3000»</h3><p>+0,5 гайки / сек</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="lathe">0</b></span></div><button class="buy" data-cost="lathe">КУПИТЬ<span class="cost"></span></button></div>
+<div class="idle-card"><div class="idle-icon">🤖</div><div><h3>Автомат «Гайкомёт»</h3><p>+4 гайки / сек</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="auto">0</b></span></div><button class="buy" data-cost="auto">КУПИТЬ<span class="cost"></span></button></div>
+<div class="idle-card"><div class="idle-icon">↗</div><div><h3>Конвейер «Не стой»</h3><p>+25% к ручному и пассивному доходу и выпуску</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="belt">0</b></span></div><button class="buy" data-cost="belt">КУПИТЬ<span class="cost"></span></button></div>
+<div class="idle-card"><div class="idle-icon">✦</div><div><h3>«Золотая резьба»</h3><p>+30 гаек / сек</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="gold">0</b></span></div><button class="buy" data-cost="gold">КУПИТЬ<span class="cost"></span></button></div></div></section>
+<section id="panel-research" class="panel hidden"><div class="head"><h2>ТЕХНОЛОГИИ</h2><span>УРОВЕНЬ <b id="automation-level">0</b></span></div><div class="research"><h3>Контур автоматизации добычи</h3><p>Каждый уровень добавляет +1 руды за цикл на каждый рудник. Конвейер дополнительно умножает выпуск.</p><button class="buy" data-cost="automation">ИССЛЕДОВАТЬ<span class="cost"></span></button></div><div class="research"><h3>Следующая стадия разработки</h3><p>В этой сборке объединены ручной кликер, idle-доход, цепочка сырья и переработки, рынок, энергосеть и контракт. Для следующего релиза нужны игровые события, исследования и балансировка.</p></div></section>
+<footer class="foot"><span>ПРОТОТИП 0.4 · АВТОСОХРАНЕНИЕ · ОФЛАЙН-ДОХОД ДО 8 ЧАСОВ</span><div class="save-actions"><button class="small-btn" id="export-save">ЭКСПОРТ</button><button class="small-btn" id="import-save">ИМПОРТ</button><input id="import-file" type="file" accept=".json,application/json" hidden></div><button class="small-btn" id="reset">СБРОС ПРОГРЕССА</button></footer>
+</div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>const FACTORY_COSTS=Object.freeze({mine:110,smelter:180,workshop:240,power:290,automation:360});
+const IDLE_MACHINES=Object.freeze({
+ press:{base:15,gps:0,tap:1,name:'Ручной пресс «Крутила»'},
+ lathe:{base:50,gps:0.5,name:'Токарный «Вжух-3000»'},
+ auto:{base:300,gps:4,name:'Автомат «Гайкомёт»'},
+ belt:{base:2000,mult:0.25,name:'Конвейер «Не стой»'},
+ gold:{base:12000,gps:30,name:'Премиум «Золотая резьба»'}
+});
+const CONTRACT_REWARD=520;
+const MAX_OFFLINE_SECONDS=8*60*60;
+const SAVE_FORMAT='gaika-empire-save';
+const BASE_PRICES=Object.freeze({ore:8,steel:32,parts:92});
+function newGame(){return{
+ version:2,money:0,lifetime:0,resources:{ore:0,steel:0,parts:0},
+ buildings:{mine:0,smelter:0,workshop:0,power:0},
+ idleOwned:{press:0,lathe:0,auto:0,belt:0,gold:0},automation:0,
+ tickCount:0,productionClock:0,reputation:0,deliveries:0,
+ log:['Смена началась: тапай по гайке — добытая руда станет первым капиталом.']
+};}
+function multiplier(s){return 1+0.25*s.idleOwned.belt;}
+function tapPower(s){return(1+s.idleOwned.press)*multiplier(s);}
+function incomePerSecond(s){const i=s.idleOwned;return(0.5*i.lathe+4*i.auto+30*i.gold)*multiplier(s);}
+function getCost(s,type){
+ if(IDLE_MACHINES[type])return Math.floor(IDLE_MACHINES[type].base*Math.pow(1.6,s.idleOwned[type]));
+ return FACTORY_COSTS[type]||0;
+}
+function prices(s){
+ const day=Math.floor(s.tickCount/24),cycle=[0,.08,-.05,.12,-.08,.03][day%6],phase=Math.sin(s.tickCount/8)*.04;
+ return Object.fromEntries(Object.entries(BASE_PRICES).map(([k,v])=>[k,Math.max(v,Math.round(v*(1+cycle+phase)))]));
+}
+function powerCapacity(s){return 5+s.buildings.power*6;}
+function powerDemand(s){const b=s.buildings;return b.mine+b.smelter*2+b.workshop*2;}
+function addMoney(s,n){s.money+=n;s.lifetime+=n;}
+function productionCycle(s){
+ const b=s.buildings;let power=powerCapacity(s),mult=multiplier(s);
+ const mines=Math.min(b.mine,power);power-=mines;
+ s.resources.ore+=Math.round(mines*(2+s.automation)*mult);
+ const smelters=Math.min(b.smelter,Math.floor(power/2));power-=smelters*2;
+ for(let i=0;i<smelters;i++)if(s.resources.ore>=2){s.resources.ore-=2;s.resources.steel+=Math.max(1,Math.round(1*mult));}
+ const workshops=Math.min(b.workshop,Math.floor(power/2));
+ for(let i=0;i<workshops;i++)if(s.resources.steel>=2){s.resources.steel-=2;s.resources.parts+=Math.max(1,Math.round(1*mult));}
+}
+function tick(s,seconds=1){
+ if(!Number.isFinite(seconds)||seconds<=0)return s;
+ const rate=incomePerSecond(s);addMoney(s,rate*seconds);
+ s.productionClock+=seconds;s.tickCount+=seconds;
+ while(s.productionClock>=2){s.productionClock-=2;productionCycle(s);}
+ const previousDay=Math.floor((s.tickCount-seconds)/24),currentDay=Math.floor(s.tickCount/24);
+ const b=s.buildings,fee=b.mine*2+b.smelter*4+b.workshop*5+b.power*3;
+ for(let day=previousDay+1;day<=currentDay;day++){
+  s.money=Math.max(0,s.money-fee);
+  s.log.unshift(`Начался день ${day+1}: содержание цехов −${fee} гаек.`);
+ }
+ s.log=s.log.slice(0,6);
+ return s;
+}
+function buy(s,type){
+ const cost=getCost(s,type);if(!cost||s.money<cost)return false;
+ s.money-=cost;
+ if(IDLE_MACHINES[type]){
+  s.idleOwned[type]++;
+  if(IDLE_MACHINES[type].tap)s.log.unshift('Ручной пресс улучшен: сила тапа выросла.');
+  else s.log.unshift(`${IDLE_MACHINES[type].name} подключён.`);
+ }else if(type==='automation'){s.automation++;s.log.unshift('Контур автоматизации улучшен.');}
+ else if(Object.hasOwn(s.buildings,type)){s.buildings[type]++;s.log.unshift(`Построено: ${typeName(type)}.`);}
+ else{s.money+=cost;return false;}
+ s.log=s.log.slice(0,6);return true;
+}
+function tap(s){const gain=tapPower(s);s.resources.ore+=gain;return gain;}
+function sell(s,resource,quantity){
+ const available=s.resources[resource];
+ if(!BASE_PRICES[resource]||!Number.isInteger(quantity)||quantity<1||available<quantity)return false;
+ const gain=prices(s)[resource]*quantity;s.resources[resource]-=quantity;addMoney(s,gain);
+ s.log.unshift(`Продано ${quantity} ${resourceName(resource)} за ${gain} гаек.`);s.log=s.log.slice(0,6);return true;
+}
+function sellAll(s,resource){const quantity=Math.floor(s.resources[resource]||0);return quantity?sell(s,resource,quantity):false;}
+function contractTerms(s){const level=Math.max(0,Math.floor(s.deliveries||0));return{number:level+1,quantity:3+level*2,reward:CONTRACT_REWARD+level*420};}
+function deliverContract(s){const order=contractTerms(s);if(s.resources.parts<order.quantity)return false;s.resources.parts-=order.quantity;addMoney(s,order.reward);s.reputation++;s.deliveries++;s.log.unshift(`Заказ №${order.number} отгружен: +${order.reward} гаек и +1 репутация.`);s.log=s.log.slice(0,6);return true;}
+function isValidState(s){
+ const finite=n=>Number.isFinite(n)&&n>=0,integer=n=>Number.isInteger(n)&&n>=0;
+ if(!s||typeof s!=='object'||s.version!==2||!finite(s.money)||!finite(s.lifetime)||!finite(s.tickCount)||!finite(s.productionClock)||s.productionClock>=2||!integer(s.automation)||!integer(s.reputation)||!integer(s.deliveries))return false;
+ if(s.lastSavedAt!==undefined&&!finite(s.lastSavedAt))return false;
+ if(!s.resources||!['ore','steel','parts'].every(k=>finite(s.resources[k])))return false;
+ if(!s.buildings||!['mine','smelter','workshop','power'].every(k=>integer(s.buildings[k])))return false;
+ if(!s.idleOwned||!Object.keys(IDLE_MACHINES).every(k=>integer(s.idleOwned[k])))return false;
+ return Array.isArray(s.log)&&s.log.length<=100&&s.log.every(x=>typeof x==='string'&&x.length<=300);
+}
+function applyOfflineIncome(s,elapsedSeconds){
+ const seconds=Math.min(MAX_OFFLINE_SECONDS,Math.max(0,Number.isFinite(elapsedSeconds)?elapsedSeconds:0));
+ const earned=incomePerSecond(s)*seconds;
+ if(earned>0)addMoney(s,earned);
+ return{seconds,earned};
+}
+function serializeSave(s,now=Date.now()){
+ if(!isValidState(s)||!Number.isFinite(now)||now<0)throw new Error('Некорректное состояние игры');
+ const snapshot=JSON.parse(JSON.stringify(s));snapshot.lastSavedAt=now;
+ return JSON.stringify({format:SAVE_FORMAT,formatVersion:1,exportedAt:new Date(now).toISOString(),state:snapshot},null,2);
+}
+function parseSave(text,now=Date.now()){
+ const data=JSON.parse(text),candidate=data&&data.format===SAVE_FORMAT&&data.formatVersion===1?data.state:data;
+ if(!isValidState(candidate)||!Number.isFinite(now)||now<0)throw new Error('Некорректный файл сохранения');
+ const restored=JSON.parse(JSON.stringify(candidate));restored.lastSavedAt=now;return restored;
+}
+function typeName(k){return({mine:'рудник',smelter:'плавильный цех',workshop:'мехцех',power:'электростанция'})[k]||k;}
+function resourceName(k){return({ore:'руды',steel:'стали',parts:'деталей'})[k]||k;}
+const Game={FACTORY_COSTS,IDLE_MACHINES,CONTRACT_REWARD,MAX_OFFLINE_SECONDS,BASE_PRICES,newGame,multiplier,tapPower,incomePerSecond,getCost,prices,powerCapacity,powerDemand,tick,buy,tap,sell,sellAll,contractTerms,deliverContract,isValidState,applyOfflineIncome,serializeSave,parseSave};
+if(typeof module!=='undefined'&&module.exports)module.exports=Game;
+if(typeof window!=='undefined')window.IndustryGame=Game;
+</script><script>{
+const $=id=>document.getElementById(id);
+const Game=window.IndustryGame;
+const SAVE_KEY='gaika-empire-industrial-v02';
+let offlineAward=0;
+let state=loadState();
+let running=true;
+let toastTimer;
+function loadState(){try{const x=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(Game.isValidState(x)){const now=Date.now(),elapsed=Number.isFinite(x.lastSavedAt)?(now-x.lastSavedAt)/1000:0;offlineAward=Game.applyOfflineIncome(x,elapsed).earned;if(offlineAward>0){x.log.unshift(`Пока завод был закрыт, автоматы заработали ${offlineAward.toLocaleString('ru-RU')} гаек.`);x.log=x.log.slice(0,6);}x.lastSavedAt=now;return x;}}catch(_){}return Game.newGame();}
+function save(){try{state.lastSavedAt=Date.now();localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(_){}}
+function fmt(n,dec=0){if(!Number.isFinite(n))return '0';return n.toLocaleString('ru-RU',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+function cash(n){return `${fmt(n)} гаек`;}
+function partWord(n){const lastTwo=n%100;if(lastTwo>=11&&lastTwo<=14)return 'деталей';switch(n%10){case 1:return 'деталь';case 2:case 3:case 4:return 'детали';default:return 'деталей';}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function notify(text){const e=$('toast');e.textContent=text;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),1800);}
+function exportSave(){try{const blob=new Blob([Game.serializeSave(state)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`gaika-empire-save-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Сохранение экспортировано');}catch(_){notify('Не удалось экспортировать сохранение');}}
+async function importSave(event){const input=event.currentTarget,file=input.files&&input.files[0];if(!file)return;if(!confirm('Импорт заменит текущий прогресс. Продолжить?')){input.value='';return;}try{state=Game.parseSave(await file.text());state.log.unshift('Сохранение импортировано.');state.log=state.log.slice(0,6);offlineAward=0;running=true;$('pause').textContent='Ⅱ ПАУЗА';render();notify('Сохранение загружено');}catch(_){notify('Файл сохранения повреждён или не подходит');}input.value='';}
+function statusText(){const demand=Game.powerDemand(state),cap=Game.powerCapacity(state);if(demand>cap)return 'СЕТЬ ПЕРЕГРУЖЕНА';if(!state.buildings.workshop)return 'ЛИНИЯ ЖДЁТ МЕХЦЕХ';return 'ЦЕПОЧКА РАБОТАЕТ';}
+function render(){
+ $('money').textContent=cash(state.money);
+ $('rate').textContent=`${fmt(Game.incomePerSecond(state),1)} / сек`;
+ $('tapPower').textContent=`+${fmt(Game.tapPower(state),2)} ед. руды за тап`;
+ $('lifetime').textContent=fmt(state.lifetime);
+ $('day').textContent=String(Math.floor(state.tickCount/24)+1).padStart(2,'0');
+ const capacity=Game.powerCapacity(state),demand=Game.powerDemand(state);
+ $('power-label').textContent=`${demand} / ${capacity} МВт`;
+ $('power-fill').style.width=`${Math.min(100,demand/capacity*100)}%`;
+ $('power-fill').classList.toggle('over',demand>capacity);
+ const status=$('status');status.classList.toggle('warn',demand>capacity);status.innerHTML=`<i class="dot"></i>${escapeHTML(statusText())}`;
+ const prices=Game.prices(state);
+ for(const k of ['ore','steel','parts']){
+   $(k).textContent=fmt(state.resources[k],state.resources[k]%1?2:0);
+   $(`${k}-price`).textContent=`${prices[k]} гаек / шт`;
+   $(`${k}-market`).textContent=fmt(state.resources[k],state.resources[k]%1?2:0);
+   $(`${k}-price-market`).textContent=`${prices[k]} гаек`;
+ }
+ for(const k of ['mine','smelter','workshop','power']){
+   const count=state.buildings[k];
+   const main=$(k==='mine'?'mine-count':k==='smelter'?'smelter-count':k==='workshop'?'workshop-count':'power-count');
+   if(main)main.textContent=count;
+   const copy=$(`${k}-count-copy`);if(copy)copy.textContent=count;
+ }
+ $('automation-level').textContent=state.automation;
+ $('rep').textContent=state.reputation;$('deliveries').textContent=state.deliveries;
+ const order=Game.contractTerms(state),missing=Math.max(0,order.quantity-state.resources.parts);
+ $('contract-number').textContent=`№ ${String(order.number).padStart(3,'0')}`;
+ $('contract-title').textContent=`Отгрузи ${order.quantity} ${partWord(order.quantity)}`;
+ $('contract-reward').textContent=`+${fmt(order.reward)} гаек`;
+ $('contract-button').disabled=missing>0;
+ $('contract-ready').textContent=missing===0?'ЗАКАЗ ГОТОВ':`Нужно ещё ${fmt(missing,missing%1?2:0)} ${partWord(missing)}`;
+ $('log').innerHTML=state.log.map(x=>`<li>${escapeHTML(x)}</li>`).join('');
+ document.querySelectorAll('[data-cost]').forEach(btn=>{
+   const type=btn.dataset.cost,cost=Game.getCost(state,type);
+   btn.disabled=state.money<cost;
+   const c=btn.querySelector('.cost');if(c)c.textContent=cash(cost);
+   const count=btn.parentElement.querySelector(`[data-owned="${type}"]`);
+   if(count)count.textContent=state.idleOwned[type]||0;
+ });
+ save();
+}
+function actBuy(type){if(!Game.buy(state,type)){notify('Не хватает гаек — тапай, продавай или выполни заказ.');return;}notify('Оборудование запущено');render();}
+function actSell(resource,amount){
+ const ok=amount==='max'?Game.sellAll(state,resource):Game.sell(state,resource,Math.min(Number(amount),Math.floor(state.resources[resource])));
+ if(!ok){notify('Недостаточно запасов на складе');return;}notify('Продажа завершена');render();
+}
+function setTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('selected',b.dataset.tab===tab));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('hidden',p.id!==`panel-${tab}`));}
+function tap(event){const gain=Game.tap(state),digits=gain%1?2:0,stockDigits=state.resources.ore%1?2:0;$('ore').textContent=fmt(state.resources.ore,stockDigits);$('ore-market').textContent=fmt(state.resources.ore,stockDigits);const area=document.querySelector('.tap-area'),r=area.getBoundingClientRect(),pop=document.createElement('span');pop.className='float';pop.textContent=`+${fmt(gain,digits)} руды`;pop.style.left=`${Math.max(20,Math.min(r.width-90,(event.clientX||r.left+r.width/2)-r.left))}px`;pop.style.top=`${Math.max(18,(event.clientY||r.top+40)-r.top-10)}px`;area.appendChild(pop);setTimeout(()=>pop.remove(),750);save();}
+$('bigNut').addEventListener('click',tap);
+document.querySelectorAll('[data-cost]').forEach(b=>b.addEventListener('click',()=>actBuy(b.dataset.cost)));
+document.querySelectorAll('[data-sell]').forEach(b=>b.addEventListener('click',()=>actSell(b.dataset.sell,b.dataset.amount==='max'?'max':Number(b.dataset.amount))));
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+$('contract-button').addEventListener('click',()=>{if(Game.deliverContract(state)){notify('Заказ отгружен · репутация +1');render();}});
+$('pause').addEventListener('click',()=>{running=!running;$('pause').textContent=running?'Ⅱ ПАУЗА':'▶ СТАРТ';notify(running?'Производство запущено':'Производство остановлено');});
+$('reset').addEventListener('click',()=>{if(confirm('Сбросить прогресс и начать заново?')){state=Game.newGame();running=true;render();notify('Новый завод готов');}});
+$('help').addEventListener('click',()=>notify('Тапай гайку → покупай автоматы → строй цепочку → продавай или отгружай заказ.'));
+ $('export-save').addEventListener('click',exportSave);
+ $('import-save').addEventListener('click',()=>$('import-file').click());
+ $('import-file').addEventListener('change',importSave);
+render();
+if(offlineAward>0)notify(`Пока вас не было: +${offlineAward.toLocaleString('ru-RU')} гаек`);
+setInterval(()=>{if(running)Game.tick(state,1);render();},1000);
+if(window.Telegram&&window.Telegram.WebApp){const tg=window.Telegram.WebApp;tg.ready();tg.expand();try{tg.setHeaderColor('#111813');tg.setBackgroundColor('#111813');}catch(_){}}
+}
+</script>
+</body></html>
