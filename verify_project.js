@@ -11,7 +11,10 @@ vm.runInNewContext(app,sandbox);
 assert.equal(els.get('money').textContent,'0 гаек');assert.equal(els.get('ore').textContent,'10');
 console.log(`standalone HTML smoke passed: ${ids.size} IDs, ${refs.size} direct references, app initialized`);
 const htmlScripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1].trim()).filter(Boolean);
+const sourceCore=fs.readFileSync('game_core.js','utf8').trim(),sourceApp=fs.readFileSync('app.js','utf8').trim();
 assert.equal(htmlScripts.length,3);
+assert.equal(htmlScripts[1],sourceCore,'built game-core script must match game_core.js');
+assert.equal(htmlScripts[2],sourceApp,'built app script must match app.js');
 class ClickEl{constructor(){this.textContent='';this.innerHTML='';this.disabled=false;this.hidden=false;this.style={};this.dataset={};this.handlers={};this.children=[];this.classList={add(){},remove(){},toggle(){}};}addEventListener(type,fn){this.handlers[type]=fn;}querySelector(){return new ClickEl();}getBoundingClientRect(){return{left:0,top:0,width:300,height:100};}appendChild(){}replaceChildren(...items){this.children=items;}append(item){this.children.push(item);}}
 const clickEls=new Map(),tapArea=new ClickEl();
 const clickDoc={getElementById(id){if(!clickEls.has(id))clickEls.set(id,new ClickEl());return clickEls.get(id);},querySelectorAll(){return[];},querySelector(sel){return sel==='.tap-area'?tapArea:new ClickEl();},createElement(){return new ClickEl();}};

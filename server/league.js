@@ -123,6 +123,8 @@ function createLeagueService({
       ON season_scores(season_id, points DESC, deliveries DESC, last_delivery_at ASC);
     CREATE INDEX IF NOT EXISTS action_receipt_created_idx ON action_receipts(created_at);
     CREATE INDEX IF NOT EXISTS action_receipt_user_idx ON action_receipts(season_id, telegram_id, created_at);
+    CREATE INDEX IF NOT EXISTS action_receipt_replay_idx ON action_receipts(telegram_id, action_id, created_at);
+    CREATE INDEX IF NOT EXISTS action_receipt_owner_created_idx ON action_receipts(telegram_id, created_at);
   `);
 
   const insertPlayer = db.prepare('INSERT OR IGNORE INTO players(telegram_id, display_name, created_at, updated_at) VALUES(?, ?, ?, ?)');
@@ -134,29 +136,28 @@ function createLeagueService({
   const getScore = db.prepare('SELECT points, deliveries, last_delivery_at FROM season_scores WHERE season_id = ? AND telegram_id = ?');
   const latestDelivery = db.prepare('SELECT MAX(last_delivery_at) AS latest FROM season_scores WHERE season_id = ?');
   const updateScore = db.prepare('UPDATE season_scores SET points = points + 1, deliveries = deliveries + 1, last_delivery_at = ? WHERE season_id = ? AND telegram_id = ?');
-  const getReceipt = db.prepare('SELECT 1 AS found FROM action_receipts WHERE season_id = ? AND telegram_id = ? AND action_id = ?');
+  const getReceipt = db.prepare('SELECT 1 AS found FROM action_receipts WHERE telegram_id = ? AND action_id = ? LIMIT 1');
   const saveReceipt = db.prepare('INSERT INTO action_receipts(season_id, telegram_id, action_id, response_json, created_at) VALUES(?, ?, ?, ?, ?)');
-  const pruneOtherSeasonReceipts = db.prepare('DELETE FROM action_receipts WHERE season_id <> ?');
   const pruneExpiredReceipts = db.prepare('DELETE FROM action_receipts WHERE created_at < ?');
   const pruneExcessReceipts = db.prepare(`
     DELETE FROM action_receipts WHERE rowid IN (
       SELECT rowid FROM action_receipts
-      WHERE season_id = ? AND telegram_id = ?
+      WHERE telegram_id = ?
       ORDER BY created_at DESC, rowid DESC
       LIMIT -1 OFFSET ?
     )
   `);
-  const getReceiptOwners = db.prepare('SELECT DISTINCT telegram_id FROM action_receipts WHERE season_id = ?');
+  const getReceiptOwners = db.prepare('SELECT DISTINCT telegram_id FROM action_receipts');
   const rateLimitBuckets = new Map();
   const rateTokensPerMs = rateLimitPerMinute / 60000;
   let rateLimitSweepCount = 0;
 
-  function consumeActionToken(userId, now) {
+  function consumeRequestToken(userId, now) {
     const bucket = rateLimitBuckets.get(userId);
     const tokens = bucket
       ? Math.min(rateLimitBurst, bucket.tokens + Math.max(0, now - bucket.updatedAt) * rateTokensPerMs)
       : rateLimitBurst;
-    if (tokens < 1) throw new LeagueError(429, 'Слишком много действий. Подожди немного.');
+    if (tokens < 1) throw new LeagueError(429, 'Слишком много запросов. Подожди немного.');
     rateLimitBuckets.set(userId, { tokens: tokens - 1, updatedAt: now });
     rateLimitSweepCount++;
     if (rateLimitSweepCount % 256 === 0) {
@@ -167,12 +168,10 @@ function createLeagueService({
   }
 
   const startupNow = clock();
-  const startupSeason = seasonWindow(startupNow);
   db.prepare("UPDATE action_receipts SET response_json = '{}' WHERE response_json <> '{}'").run();
-  pruneOtherSeasonReceipts.run(startupSeason.id);
   pruneExpiredReceipts.run(startupNow - receiptTtlMs);
-  for (const owner of getReceiptOwners.all(startupSeason.id)) {
-    pruneExcessReceipts.run(startupSeason.id, owner.telegram_id, maxActionReceiptsPerUser);
+  for (const owner of getReceiptOwners.all()) {
+    pruneExcessReceipts.run(owner.telegram_id, maxActionReceiptsPerUser);
   }
 
   function normalizeUser(user) {
@@ -265,6 +264,7 @@ function createLeagueService({
   function getState(user) {
     const normalized = normalizeUser(user);
     const now = clock();
+    consumeRequestToken(normalized.id, now);
     const season = seasonWindow(now);
     const player = loadOrCreate(normalized, season, now);
     advance(player, season, now);
@@ -280,10 +280,9 @@ function createLeagueService({
     try {
       const now = clock();
       const season = seasonWindow(now);
-      consumeActionToken(normalized.id, now);
-      pruneOtherSeasonReceipts.run(season.id);
+      consumeRequestToken(normalized.id, now);
       pruneExpiredReceipts.run(now - receiptTtlMs);
-      const existing = getReceipt.get(season.id, normalized.id, action.actionId);
+      const existing = getReceipt.get(normalized.id, action.actionId);
       if (existing) {
         const player = loadOrCreate(normalized, season, now);
         const result = snapshot(normalized, season, player.state);
@@ -325,7 +324,7 @@ function createLeagueService({
       }
       const result = snapshot(normalized, season, player.state);
       saveReceipt.run(season.id, normalized.id, action.actionId, '{}', now);
-      pruneExcessReceipts.run(season.id, normalized.id, maxActionReceiptsPerUser);
+      pruneExcessReceipts.run(normalized.id, maxActionReceiptsPerUser);
       db.exec('COMMIT');
       return result;
     } catch (error) {
@@ -386,7 +385,8 @@ function createLeagueServer({ service, botToken, allowedOrigin = '', clock = () 
       catch (error) { throw new LeagueError(401, error.message); }
 
       if (req.method === 'GET' && url.pathname === '/api/league/state') {
-        res.writeHead(200); res.end(JSON.stringify(service.getState(user))); return;
+        const result = service.getState(user);
+        res.writeHead(200); res.end(JSON.stringify(result)); return;
       }
       if (req.method === 'POST' && url.pathname === '/api/league/action') {
         const action = await readJsonBody(req);

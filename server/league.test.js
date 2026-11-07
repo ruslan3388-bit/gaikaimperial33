@@ -66,8 +66,23 @@ test('an action uses the UTC season current after acquiring the database write l
   const previousSeasonReceipts = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ?').get('2026-11').count;
   const currentSeasonReceipts = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ?').get('2026-12').count;
   assert.equal(result.season.id, '2026-12');
-  assert.equal(previousSeasonReceipts, 0);
+  assert.equal(previousSeasonReceipts, 1);
   assert.equal(currentSeasonReceipts, 1);
+  db.close();
+});
+
+test('a repeated actionId is deduplicated across a UTC season rollover', () => {
+  let now = Date.UTC(2026, 10, 30, 23, 59, 58);
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => now });
+  const action = { actionId: 'cross-season-0001', type: 'tap' };
+  assert.equal(service.act(user, action).state.money, 1);
+  now = Date.UTC(2026, 11, 1, 0, 0, 2);
+  const retried = service.act(user, action);
+  assert.equal(retried.season.id, '2026-12');
+  assert.equal(retried.state.money, 0);
+  const receipts = db.prepare('SELECT season_id FROM action_receipts WHERE telegram_id = ? AND action_id = ?').all(user.id, action.actionId);
+  assert.deepEqual(receipts.map(row => row.season_id), ['2026-11']);
   db.close();
 });
 
@@ -229,17 +244,23 @@ test('replayed action IDs still consume request-rate tokens', () => {
   assert.equal(service.act(user, action).state.money, 1);
   assert.equal(service.act(user, action).state.money, 1);
   assert.throws(() => service.act(user, action), error => error.status === 429);
-  assert.equal(service.getState(user).state.money, 1);
+  const storedState = JSON.parse(db.prepare('SELECT state_json FROM league_factories WHERE season_id = ? AND telegram_id = ?').get('2026-11', user.id).state_json);
+  assert.equal(storedState.money, 1);
   db.close();
 });
 
-test('startup enforces the per-player receipt cap for existing databases', () => {
+test('startup enforces the per-player receipt cap across seasons', () => {
+  let now = Date.UTC(2026, 10, 30, 23, 59, 50);
   const db = new DatabaseSync(':memory:');
-  const seedService = createLeagueService({ db, clock: () => NOW, maxActionReceiptsPerUser: 5 });
-  for (let i = 1; i <= 5; i++) seedService.act(user, { actionId: `startup-receipt-${String(i).padStart(2, '0')}`, type: 'tap' });
-  createLeagueService({ db, clock: () => NOW, maxActionReceiptsPerUser: 2 });
-  const count = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ? AND telegram_id = ?').get('2026-11', user.id).count;
-  assert.equal(count, 2);
+  const seedService = createLeagueService({ db, clock: () => now, maxActionReceiptsPerUser: 5 });
+  for (let i = 1; i <= 2; i++) seedService.act(user, { actionId: `startup-receipt-${String(i).padStart(2, '0')}`, type: 'tap' });
+  now = Date.UTC(2026, 11, 1, 0, 0, 1);
+  for (let i = 3; i <= 4; i++) seedService.act(user, { actionId: `startup-receipt-${String(i).padStart(2, '0')}`, type: 'tap' });
+  createLeagueService({ db, clock: () => now, maxActionReceiptsPerUser: 3 });
+  const count = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE telegram_id = ?').get(user.id).count;
+  const previousSeasonCount = db.prepare('SELECT COUNT(*) AS count FROM action_receipts WHERE season_id = ? AND telegram_id = ?').get('2026-11', user.id).count;
+  assert.equal(count, 3);
+  assert.equal(previousSeasonCount, 1);
   db.close();
 });
 
@@ -253,6 +274,19 @@ test('server token bucket limits rapid actions per player', () => {
   assert.throws(() => act('rate-limit-0003'), error => error.status === 429);
   now += 1000;
   assert.equal(act('rate-limit-0004').state.money, 3);
+  db.close();
+});
+
+test('state reads consume the shared per-user request-rate budget', () => {
+  let now = NOW;
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => now, rateLimitPerMinute: 60, rateLimitBurst: 2 });
+  assert.equal(service.getState(user).league.seasonId, '2026-11');
+  assert.equal(service.getState(user).league.seasonId, '2026-11');
+  assert.throws(() => service.getState(user), error => error.status === 429);
+  assert.equal(service.getState({ id: '77124', displayName: 'Другой' }).league.seasonId, '2026-11');
+  now += 1000;
+  assert.equal(service.getState(user).league.seasonId, '2026-11');
   db.close();
 });
 
@@ -274,6 +308,20 @@ test('HTTP API requires valid Telegram initData and returns season state', async
   assert.equal(payload.league.seasonId, '2026-11');
   assert.equal(payload.player.displayName, '@rus');
   assert.equal(Array.isArray(payload.league.leaderboard), true);
+});
+
+test('HTTP API rate-limits repeated authenticated state reads', async t => {
+  const db = new DatabaseSync(':memory:');
+  const service = createLeagueService({ db, clock: () => NOW, rateLimitPerMinute: 60, rateLimitBurst: 1 });
+  const server = createLeagueServer({ service, botToken: BOT_TOKEN, clock: () => NOW });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => { server.close(); db.close(); });
+  const url = `http://127.0.0.1:${server.address().port}/api/league/state`;
+  const headers = { Authorization: `tma ${signedInitData(userData)}` };
+  assert.equal((await fetch(url, { headers })).status, 200);
+  const limited = await fetch(url, { headers });
+  assert.equal(limited.status, 429);
+  assert.match((await limited.json()).error, /Слишком много запросов/);
 });
 
 test('browser origins are rejected until an exact CORS origin is configured', async t => {
