@@ -36,6 +36,15 @@ test('workshop turns steel into parts and a contract pays currency',()=>{
  assert.equal(s.money,before+G.CONTRACT_REWARD);assert.equal(s.reputation,1);
 });
 
+test('league orders follow the published 3/520, 5/940, 7/1360 progression',()=>{
+ assert.deepEqual(G.contractFor(0),{quantity:3,reward:520});
+ assert.deepEqual(G.contractFor(1),{quantity:5,reward:940});
+ assert.deepEqual(G.contractFor(2),{quantity:7,reward:1360});
+ const s=G.newGame();s.resources.parts=8;
+ assert.equal(G.deliverContract(s,0),true);assert.equal(s.resources.parts,5);assert.equal(s.money,520);
+ assert.equal(G.deliverContract(s,1),true);assert.equal(s.resources.parts,0);assert.equal(s.money,1460);
+});
+
 test('market sale and insufficient purchase keep inventory and money consistent',()=>{
  const s=G.newGame();s.money=0;assert.equal(G.buy(s,'gold'),false);
  const p=G.prices(s).steel;assert.equal(G.sell(s,'steel',2),true);

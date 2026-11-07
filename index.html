@@ -12,7 +12,7 @@
 <section class="hero"><div><div class="eyebrow">ОТ ОДНОЙ ГАЙКИ — К ЗАВОДСКОЙ ИМПЕРИИ</div><h1>Смена<br>началась.</h1><p>Тапай, запускай автоматы, строй производственные цепочки и выполняй заказы.</p></div><div class="daybox"><span>ДЕНЬ</span><b id="day">01</b></div></section>
 <section class="stats"><div class="stat balance"><label>КАПИТАЛ</label><strong id="money">0 гаек</strong></div><div class="stat"><label>АВТОДОХОД / СЕК</label><strong id="rate">0 гаек/с</strong></div><div class="stat"><label>ЭНЕРГОСЕТЬ</label><strong id="power-label">3 / 5 МВт</strong><div class="powerbar"><i id="power-fill"></i></div></div></section>
 <section class="tap-area"><button class="nut-button" id="bigNut" aria-label="Нажми, чтобы заработать гайки"><svg class="nut-svg" viewBox="0 0 100 100" aria-hidden="true"><path fill="#f6d886" fill-rule="evenodd" d="M50 5 88 27v46L50 95 12 73V27L50 5Zm0 27a18 18 0 1 0 0 36 18 18 0 0 0 0-36Z"/><circle cx="50" cy="50" r="11" fill="#986129" opacity=".72"/><path d="m50 9 33 19M17 29v40m33 26 33-19" stroke="#fff0bb" stroke-width="3" opacity=".5"/></svg></button><div class="tap-copy"><label>РУЧНОЕ ПРОИЗВОДСТВО</label><strong id="tapPower">+1 гайка за тап</strong><p>Нажми на гайку. Купи автоматы, чтобы доход шёл сам.</p><div class="tap-count">ВСЕГО ЗАРАБОТАНО: <span id="lifetime">0</span></div></div></section>
-<nav class="tabs"><button class="tab selected" data-tab="factory">ЗАВОД</button><button class="tab" data-tab="market">РЫНОК</button><button class="tab" data-tab="idle">АВТОМАТЫ</button><button class="tab" data-tab="research">ТЕХНОЛОГИИ</button></nav>
+<nav class="tabs"><button class="tab selected" data-tab="factory">ЗАВОД</button><button class="tab" data-tab="market">РЫНОК</button><button class="tab" data-tab="idle">АВТОМАТЫ</button><button class="tab" data-tab="research">ТЕХНОЛОГИИ</button><button class="tab" data-tab="league">ЛИГА</button></nav>
 <main id="panel-factory" class="panel"><div class="head"><h2>ПРОИЗВОДСТВЕННАЯ ЦЕПОЧКА</h2><span id="status" class="status"><i class="dot"></i>РАБОТАЕТ</span></div>
 <div class="chain"><div class="machine-node"><b id="mine-count">1</b><strong>РУДНИК</strong><small>руда / цикл</small></div><div class="arrow">›</div><div class="machine-node"><b id="smelter-count">1</b><strong>ПЛАВИЛКА</strong><small>2 → 1 сталь</small></div><div class="arrow">›</div><div class="machine-node"><b id="workshop-count">0</b><strong>МЕХЦЕХ</strong><small>2 → 1 деталь</small></div></div>
 <div class="head"><h2>СКЛАД И РЫНОК</h2><span>ПРОДАЖА ФИНАНСИРУЕТ РОСТ</span></div><div class="stock"><div class="stock-item"><label>РУДА</label><b id="ore">10</b><small id="ore-price">8 гаек / шт</small></div><div class="stock-item"><label>СТАЛЬ</label><b id="steel">5</b><small id="steel-price">32 гайки / шт</small></div><div class="stock-item"><label>ДЕТАЛИ</label><b id="parts">0</b><small id="parts-price">92 гайки / шт</small></div></div>
@@ -21,7 +21,7 @@
 <div class="build-card"><div><h3>Плавильная печь</h3><p>2 руды → 1 сталь<br>2 МВт</p><span class="owned">ПОСТРОЕНО: <b id="smelter-count-copy">1</b></span></div><button class="buy" data-cost="smelter">СТРОИТЬ<span class="cost"></span></button></div>
 <div class="build-card"><div><h3>Мехцех</h3><p>2 стали → 1 деталь<br>2 МВт</p><span class="owned">ПОСТРОЕНО: <b id="workshop-count-copy">0</b></span></div><button class="buy" data-cost="workshop">СТРОИТЬ<span class="cost"></span></button></div>
 <div class="build-card"><div><h3>Электростанция</h3><p>+6 МВт к лимиту сети</p><span class="owned">ПОСТРОЕНО: <b id="power-count">0</b></span></div><button class="buy" data-cost="power">СТРОИТЬ<span class="cost"></span></button></div></div>
-<div class="head"><h2>ЗАКАЗ РЕМОНТНОГО ДЕПО</h2><span>№ 001</span></div><div class="order"><div class="order-top"><h3>Отгрузи 3 детали</h3><span class="reward">+520 гаек</span></div><p>Оплата за контракт повышает репутацию завода. Детали выгоднее продавать по заказу.</p><p style="font:9px var(--mono);color:var(--mute);margin:0 0 9px">РЕПУТАЦИЯ <b id="rep">0</b> · ЗАКАЗЫ <b id="deliveries">0</b></p><div class="order-foot"><small id="contract-ready">Нужно ещё 3 детали</small><button class="primary" id="contract-button">ОТГРУЗИТЬ</button></div></div>
+<div class="head"><h2>ЗАКАЗ РЕМОНТНОГО ДЕПО</h2><span>№ 001</span></div><div class="order"><div class="order-top"><h3 id="contract-title">Отгрузи 3 детали</h3><span id="contract-reward" class="reward">+520 гаек</span></div><p>Оплата за контракт повышает репутацию завода. Детали выгоднее продавать по заказу.</p><p style="font:9px var(--mono);color:var(--mute);margin:0 0 9px">РЕПУТАЦИЯ <b id="rep">0</b> · ЗАКАЗЫ <b id="deliveries">0</b></p><div class="order-foot"><small id="contract-ready">Нужно ещё 3 детали</small><button class="primary" id="contract-button">ОТГРУЗИТЬ</button></div></div>
 <div class="head"><h2>ЖУРНАЛ СМЕНЫ</h2><span>СОХРАНЕНИЕ АВТОМАТИЧЕСКОЕ</span></div><ul class="feed" id="log"></ul></main>
 <section id="panel-market" class="panel hidden"><div class="head"><h2>ТОРГОВАЯ ПЛОЩАДКА</h2><span>ЦЕНЫ КОЛЕБЛЮТСЯ</span></div><p style="color:var(--mute);font-size:11px;line-height:1.5">Продавай часть складских запасов, чтобы строить новые цеха. Оставь сырьё для своей цепочки.</p><div class="market-list">
 <div class="market-row"><div><strong>Руда</strong><small>На складе: <span id="ore-market">10</span></small></div><span class="price" id="ore-price-market">8 гаек</span><div class="market-actions"><button data-sell="ore" data-amount="1">−1</button><button data-sell="ore" data-amount="5">−5</button><button data-sell="ore" data-amount="max">ВСЁ</button></div></div>
@@ -34,9 +34,16 @@
 <div class="idle-card"><div class="idle-icon">↗</div><div><h3>Конвейер «Не стой»</h3><p>+25% к ручному и пассивному доходу и выпуску</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="belt">0</b></span></div><button class="buy" data-cost="belt">КУПИТЬ<span class="cost"></span></button></div>
 <div class="idle-card"><div class="idle-icon">✦</div><div><h3>«Золотая резьба»</h3><p>+30 гаек / сек</p><span class="owned">КОЛИЧЕСТВО: <b data-owned="gold">0</b></span></div><button class="buy" data-cost="gold">КУПИТЬ<span class="cost"></span></button></div></div></section>
 <section id="panel-research" class="panel hidden"><div class="head"><h2>ТЕХНОЛОГИИ</h2><span>УРОВЕНЬ <b id="automation-level">0</b></span></div><div class="research"><h3>Контур автоматизации добычи</h3><p>Каждый уровень добавляет +1 руды за цикл на каждый рудник. Конвейер дополнительно умножает выпуск.</p><button class="buy" data-cost="automation">ИССЛЕДОВАТЬ<span class="cost"></span></button></div><div class="research"><h3>Следующая стадия разработки</h3><p>В этой сборке объединены ручной кликер, idle-доход, цепочка сырья и переработки, рынок, энергосеть и контракт. Для следующего релиза нужны игровые события, исследования и балансировка.</p></div></section>
+<section id="panel-league" class="panel hidden">
+<div class="head"><h2>СЕЗОННАЯ ЛИГА</h2><span id="league-season">—</span></div>
+<p id="league-status" role="status" aria-live="polite" style="color:var(--mute);font-size:11px;line-height:1.5">Сервер лиги ещё не настроен. Одиночная игра работает как прежде.</p>
+<div class="stats"><div class="stat"><label>МЕСТО</label><strong id="league-rank">—</strong></div><div class="stat"><label>ОЧКИ</label><strong id="league-points">0</strong></div><div class="stat"><label>ЗАКАЗЫ</label><strong id="league-deliveries">0</strong></div></div>
+<div class="order"><div class="order-top"><h3>Отдельный завод сезона</h3><span class="reward">Старт одинаковый</span></div><p>Очки начисляются сервером только за отгруженные заказы. Соло-сохранение остаётся отдельно.</p><button class="primary" id="league-connect">ВОЙТИ В ЛИГУ</button><button class="small-btn" id="league-exit" hidden>ВЕРНУТЬСЯ В СОЛО</button></div>
+<div class="head"><h2>ТАБЛИЦА ЛИДЕРОВ</h2><span>БЕЗ TELEGRAM ID</span></div><ol class="feed" id="league-board" aria-label="Таблица лидеров сезонной лиги"></ol>
+</section>
 <footer class="foot"><span>ПРОТОТИП 0.2 · ЛОКАЛЬНОЕ СОХРАНЕНИЕ</span><button class="small-btn" id="reset">СБРОС ПРОГРЕССА</button></footer>
 </div><div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>;(function(){
+<script>window.GAIKA_LEAGUE_API_URL='';</script><script>;(function(){
 const FACTORY_COSTS=Object.freeze({mine:110,smelter:180,workshop:240,power:290,automation:360});
 const IDLE_MACHINES=Object.freeze({
  press:{base:15,gps:0,tap:1,name:'Ручной пресс «Крутила»'},
@@ -103,31 +110,99 @@ function buy(s,type){
 }
 function tap(s){const gain=tapPower(s);addMoney(s,gain);return gain;}
 function sell(s,resource,quantity){
- const available=s.resources[resource];
- if(!BASE_PRICES[resource]||!Number.isInteger(quantity)||quantity<1||available<quantity)return false;
+ if(!Object.hasOwn(BASE_PRICES,resource)||!Object.hasOwn(s.resources,resource)||!Number.isInteger(quantity)||quantity<1)return false;
+ const available=s.resources[resource];if(available<quantity)return false;
  const gain=prices(s)[resource]*quantity;s.resources[resource]-=quantity;addMoney(s,gain);
  s.log.unshift(`Продано ${quantity} ${resourceName(resource)} за ${gain} гаек.`);s.log=s.log.slice(0,6);return true;
 }
 function sellAll(s,resource){const quantity=Math.floor(s.resources[resource]||0);return quantity?sell(s,resource,quantity):false;}
-function deliverContract(s){if(s.resources.parts<3)return false;s.resources.parts-=3;addMoney(s,CONTRACT_REWARD);s.reputation++;s.deliveries++;s.log.unshift(`Заказ отгружен: +${CONTRACT_REWARD} гаек и +1 репутация.`);s.log=s.log.slice(0,6);return true;}
+function contractFor(orderIndex=0){
+ if(!Number.isSafeInteger(orderIndex)||orderIndex<0)throw new RangeError('Некорректный номер заказа');
+ return{quantity:3+2*orderIndex,reward:CONTRACT_REWARD+420*orderIndex};
+}
+function deliverContract(s,orderIndex=0){
+ const order=contractFor(orderIndex);if(s.resources.parts<order.quantity)return false;
+ s.resources.parts-=order.quantity;addMoney(s,order.reward);s.reputation++;s.deliveries++;
+ s.log.unshift(`Заказ отгружен: ${order.quantity} деталей, +${order.reward} гаек и +1 репутация.`);s.log=s.log.slice(0,6);return true;
+}
 function typeName(k){return({mine:'рудник',smelter:'плавильный цех',workshop:'мехцех',power:'электростанция'})[k]||k;}
 function resourceName(k){return({ore:'руды',steel:'стали',parts:'деталей'})[k]||k;}
-const Game={FACTORY_COSTS,IDLE_MACHINES,CONTRACT_REWARD,BASE_PRICES,newGame,multiplier,tapPower,incomePerSecond,getCost,prices,powerCapacity,powerDemand,tick,buy,tap,sell,sellAll,deliverContract};
+const Game={FACTORY_COSTS,IDLE_MACHINES,CONTRACT_REWARD,BASE_PRICES,newGame,multiplier,tapPower,incomePerSecond,getCost,prices,powerCapacity,powerDemand,tick,buy,tap,sell,sellAll,contractFor,deliverContract};
 if(typeof module!=='undefined'&&module.exports)module.exports=Game;
 if(typeof window!=='undefined')window.IndustryGame=Game;
 })();
 </script><script>const $=id=>document.getElementById(id);
 const Game=window.IndustryGame;
 const SAVE_KEY='gaika-empire-industrial-v02';
-let state=loadState();
+const LEAGUE_API_URL=String(window.GAIKA_LEAGUE_API_URL||'').trim().replace(/\/+$/,'');
+let soloState=loadState();
+let state=soloState;
 let running=true;
+let leagueMode=false;
+let leagueSnapshot=null;
+let leagueError='';
+let leagueBusy=false;
+let leagueJoinPending=false;
+let lastLeagueRefresh=0;
+let leagueActionRevision=0;
+let leagueRefreshSequence=0;
+let latestAppliedLeagueRefresh=0;
+let actionQueue=Promise.resolve();
 let toastTimer;
 function loadState(){try{const x=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(x&&x.version===2&&x.resources&&x.idleOwned&&x.buildings)return x;}catch(_){}return Game.newGame();}
-function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(_){}}
+function save(){if(leagueMode)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(soloState));}catch(_){}}
 function fmt(n,dec=0){if(!Number.isFinite(n))return '0';return n.toLocaleString('ru-RU',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
 function cash(n){return `${fmt(n)} гаек`;}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function notify(text){const e=$('toast');e.textContent=text;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),1800);}
+function telegramInitData(){return window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp.initData||'':'';}
+function updateLeaguePanel(){
+ const status=$('league-status'),connect=$('league-connect'),exit=$('league-exit'),data=leagueSnapshot;
+ if(!LEAGUE_API_URL)status.textContent='Сервер лиги ещё не настроен. Одиночная игра работает как прежде.';
+ else if(!telegramInitData())status.textContent='Открой мини-приложение из меню бота в Telegram: лиге нужна подписанная initData.';
+ else if(leagueError)status.textContent=`Не удалось подключить лигу: ${leagueError}`;
+ else if(leagueMode)status.textContent='Лиговый завод синхронизируется с сервером. Локальные сохранения одиночной игры не меняются.';
+ else if(data)status.textContent='Сезон загружен. Войди в лигу, чтобы играть отдельным заводом и попасть в рейтинг.';
+ else status.textContent='Подключись, чтобы загрузить сезон и таблицу лидеров.';
+ connect.disabled=!LEAGUE_API_URL||!telegramInitData()||leagueBusy||leagueJoinPending||leagueMode;connect.hidden=leagueMode;exit.hidden=!leagueMode;exit.disabled=leagueBusy;
+ const board=$('league-board');board.replaceChildren();
+ if(!data){$('league-season').textContent='—';$('league-rank').textContent='—';$('league-points').textContent='0';$('league-deliveries').textContent='0';return;}
+ const {season,league}=data,days=Math.max(0,Math.ceil((season.endsAt-Date.now())/86400000));
+ $('league-season').textContent=`${season.id} UTC · осталось ${fmt(days)} дн.`;
+ $('league-rank').textContent=`#${fmt(league.rank)}`;$('league-points').textContent=fmt(league.points);$('league-deliveries').textContent=fmt(league.deliveries);
+ if(!league.leaderboard.length){const empty=document.createElement('li');empty.textContent='В этом сезоне пока нет игроков.';board.append(empty);return;}
+ for(const entry of league.leaderboard){const row=document.createElement('li');row.textContent=`${fmt(entry.rank)}. ${entry.displayName} — ${fmt(entry.points)} очк. · заказов ${fmt(entry.deliveries)}`;board.append(row);}
+}
+async function leagueRequest(path,options={}){
+ if(!LEAGUE_API_URL)throw new Error('адрес сервера лиги не настроен');
+ const initData=telegramInitData();if(!initData)throw new Error('нет Telegram initData — открой игру из бота');
+ const headers={...(options.headers||{}),Authorization:`tma ${initData}`};if(options.body)headers['Content-Type']='application/json';
+ const response=await fetch(`${LEAGUE_API_URL}${path}`,{...options,headers});let payload={};try{payload=await response.json();}catch(_){}
+ if(!response.ok)throw new Error(payload.error||`ошибка сервера (${response.status})`);return payload;
+}
+async function refreshLeague({join=false}={}){
+ if(!LEAGUE_API_URL||!telegramInitData()||leagueBusy||leagueJoinPending){updateLeaguePanel();return null;}
+ if(join){leagueJoinPending=true;updateLeaguePanel();}
+ const refreshSequence=++leagueRefreshSequence,actionRevision=leagueActionRevision;
+ try{leagueError='';const result=await leagueRequest('/api/league/state');
+  const isLatestRequest=refreshSequence===leagueRefreshSequence,canApplySnapshot=isLatestRequest&&refreshSequence>=latestAppliedLeagueRefresh;
+  if(actionRevision!==leagueActionRevision||!canApplySnapshot)return null;
+  latestAppliedLeagueRefresh=refreshSequence;leagueSnapshot=result;lastLeagueRefresh=Date.now();leagueError='';
+  if(join){leagueMode=true;state=result.state;running=true;notify('Лиговый завод загружен с сервера');}
+  else if(leagueMode)state=result.state;
+  updateLeaguePanel();if(leagueMode)render();return result;
+ }catch(error){if(actionRevision!==leagueActionRevision||refreshSequence<latestAppliedLeagueRefresh||refreshSequence<leagueRefreshSequence)return null;leagueError=error.message;updateLeaguePanel();if(join)notify(`Лига недоступна: ${error.message}`);return null;}
+ finally{if(join){leagueJoinPending=false;updateLeaguePanel();}}
+}
+function createActionId(){if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID();return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,14)}`;}
+function sendLeagueAction(action){
+ const task=actionQueue.then(async()=>{if(!leagueMode)return false;leagueActionRevision++;leagueBusy=true;updateLeaguePanel();render();
+  try{const result=await leagueRequest('/api/league/action',{method:'POST',body:JSON.stringify({...action,actionId:createActionId()})});
+   leagueSnapshot=result;if(leagueMode)state=result.state;leagueError='';lastLeagueRefresh=Date.now();updateLeaguePanel();render();return true;
+  }catch(error){leagueError=error.message;updateLeaguePanel();notify(`Действие не принято: ${error.message}`);return false;}
+  finally{leagueBusy=false;updateLeaguePanel();render();}
+ });actionQueue=task.catch(()=>{});return task;
+}
 function statusText(){const demand=Game.powerDemand(state),cap=Game.powerCapacity(state);if(demand>cap)return 'СЕТЬ ПЕРЕГРУЖЕНА';if(!state.buildings.workshop)return 'ЛИНИЯ ЖДЁТ МЕХЦЕХ';return 'ЦЕПОЧКА РАБОТАЕТ';}
 function render(){
  $('money').textContent=cash(state.money);
@@ -155,35 +230,46 @@ function render(){
  }
  $('automation-level').textContent=state.automation;
  $('rep').textContent=state.reputation;$('deliveries').textContent=state.deliveries;
- $('contract-button').disabled=state.resources.parts<3;
- $('contract-ready').textContent=state.resources.parts>=3?'ЗАКАЗ ГОТОВ':`Нужно ещё ${fmt(Math.max(0,3-state.resources.parts),state.resources.parts%1?1:0)} детали`;
+ const order=Game.contractFor(leagueMode&&leagueSnapshot?leagueSnapshot.league.deliveries:0);
+ $('contract-title').textContent=`Отгрузи ${fmt(order.quantity)} детали`;$('contract-reward').textContent=`+${fmt(order.reward)} гаек`;
+ $('contract-button').disabled=state.resources.parts<order.quantity||leagueBusy;
+ $('contract-ready').textContent=state.resources.parts>=order.quantity?'ЗАКАЗ ГОТОВ':`Нужно ещё ${fmt(Math.max(0,order.quantity-state.resources.parts),state.resources.parts%1?1:0)} детали`;
  $('log').innerHTML=state.log.map(x=>`<li>${escapeHTML(x)}</li>`).join('');
  document.querySelectorAll('[data-cost]').forEach(btn=>{
    const type=btn.dataset.cost,cost=Game.getCost(state,type);
-   btn.disabled=state.money<cost;
+   btn.disabled=leagueBusy||state.money<cost;
    const c=btn.querySelector('.cost');if(c)c.textContent=cash(cost);
    const count=btn.parentElement.querySelector(`[data-owned="${type}"]`);
    if(count)count.textContent=state.idleOwned[type]||0;
  });
- save();
+ document.querySelectorAll('[data-sell]').forEach(btn=>{btn.disabled=leagueBusy;});
+ $('pause').disabled=leagueMode||leagueBusy;$('reset').disabled=leagueMode||leagueBusy;
+ if(!leagueMode)save();
 }
-function actBuy(type){if(!Game.buy(state,type)){notify('Не хватает гаек — тапай, продавай или выполни заказ.');return;}notify('Оборудование запущено');render();}
+function actBuy(type){if(leagueMode)return sendLeagueAction({type:'buy',machine:type});if(!Game.buy(state,type)){notify('Не хватает гаек — тапай, продавай или выполни заказ.');return;}notify('Оборудование запущено');render();}
 function actSell(resource,amount){
+ if(leagueMode){if(amount==='max')return sendLeagueAction({type:'sellAll',resource});return sendLeagueAction({type:'sell',resource,quantity:Math.min(Number(amount),Math.floor(state.resources[resource]))});}
  const ok=amount==='max'?Game.sellAll(state,resource):Game.sell(state,resource,Math.min(Number(amount),Math.floor(state.resources[resource])));
  if(!ok){notify('Недостаточно запасов на складе');return;}notify('Продажа завершена');render();
 }
-function setTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('selected',b.dataset.tab===tab));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('hidden',p.id!==`panel-${tab}`));}
-function tap(event){const gain=Game.tap(state);$('money').textContent=cash(state.money);$('lifetime').textContent=fmt(state.lifetime);const area=document.querySelector('.tap-area'),r=area.getBoundingClientRect(),pop=document.createElement('span');pop.className='float';pop.textContent=`+${fmt(gain,2)}`;pop.style.left=`${Math.max(20,Math.min(r.width-90,(event.clientX||r.left+r.width/2)-r.left))}px`;pop.style.top=`${Math.max(18,(event.clientY||r.top+40)-r.top-10)}px`;area.appendChild(pop);setTimeout(()=>pop.remove(),750);save();}
+function setTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('selected',b.dataset.tab===tab));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('hidden',p.id!==`panel-${tab}`));if(tab==='league')refreshLeague();}
+function tap(event){if(leagueMode){sendLeagueAction({type:'tap'});return;}const gain=Game.tap(state);$('money').textContent=cash(state.money);$('lifetime').textContent=fmt(state.lifetime);const area=document.querySelector('.tap-area'),r=area.getBoundingClientRect(),pop=document.createElement('span');pop.className='float';pop.textContent=`+${fmt(gain,2)}`;pop.style.left=`${Math.max(20,Math.min(r.width-90,(event.clientX||r.left+r.width/2)-r.left))}px`;pop.style.top=`${Math.max(18,(event.clientY||r.top+40)-r.top-10)}px`;area.appendChild(pop);setTimeout(()=>pop.remove(),750);save();}
 $('bigNut').addEventListener('click',tap);
 document.querySelectorAll('[data-cost]').forEach(b=>b.addEventListener('click',()=>actBuy(b.dataset.cost)));
 document.querySelectorAll('[data-sell]').forEach(b=>b.addEventListener('click',()=>actSell(b.dataset.sell,b.dataset.amount==='max'?'max':Number(b.dataset.amount))));
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
-$('contract-button').addEventListener('click',()=>{if(Game.deliverContract(state)){notify('Заказ отгружен · репутация +1');render();}});
+$('contract-button').addEventListener('click',()=>{
+ if(leagueMode){sendLeagueAction({type:'deliver'});return;}
+ if(Game.deliverContract(state)){notify('Заказ отгружен · репутация +1');render();}
+});
+$('league-connect').addEventListener('click',()=>refreshLeague({join:true}));
+$('league-exit').addEventListener('click',()=>{if(leagueBusy)return;leagueMode=false;state=soloState;running=true;leagueError='';render();updateLeaguePanel();notify('Вернулись к одиночному заводу');});
 $('pause').addEventListener('click',()=>{running=!running;$('pause').textContent=running?'Ⅱ ПАУЗА':'▶ СТАРТ';notify(running?'Производство запущено':'Производство остановлено');});
-$('reset').addEventListener('click',()=>{if(confirm('Сбросить прогресс и начать заново?')){state=Game.newGame();running=true;render();notify('Новый завод готов');}});
+$('reset').addEventListener('click',()=>{if(leagueMode)return;if(confirm('Сбросить прогресс и начать заново?')){soloState=Game.newGame();state=soloState;running=true;render();notify('Новый завод готов');}});
 $('help').addEventListener('click',()=>notify('Тапай гайку → покупай автоматы → строй цепочку → продавай или отгружай заказ.'));
 render();
-setInterval(()=>{if(running){Game.tick(state,1);render();}},1000);
+updateLeaguePanel();
 if(window.Telegram&&window.Telegram.WebApp){const tg=window.Telegram.WebApp;tg.ready();tg.expand();try{tg.setHeaderColor('#111813');tg.setBackgroundColor('#111813');}catch(_){}}
+setInterval(()=>{if(leagueMode){if(!leagueBusy&&Date.now()-lastLeagueRefresh>=15000)refreshLeague();return;}if(running){Game.tick(state,1);render();}},1000);
 </script>
 </body></html>
