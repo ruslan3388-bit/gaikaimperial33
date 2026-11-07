@@ -71,10 +71,18 @@ function sell(s,resource,quantity){
  s.log.unshift(`Продано ${quantity} ${resourceName(resource)} за ${gain} гаек.`);s.log=s.log.slice(0,6);return true;
 }
 function sellAll(s,resource){const quantity=Math.floor(s.resources[resource]||0);return quantity?sell(s,resource,quantity):false;}
-function deliverContract(s){if(s.resources.parts<3)return false;s.resources.parts-=3;addMoney(s,CONTRACT_REWARD);s.reputation++;s.deliveries++;s.log.unshift(`Заказ отгружен: +${CONTRACT_REWARD} гаек и +1 репутация.`);s.log=s.log.slice(0,6);return true;}
+function contractFor(orderIndex=0){
+ if(!Number.isSafeInteger(orderIndex)||orderIndex<0)throw new RangeError('Некорректный номер заказа');
+ return{quantity:3+2*orderIndex,reward:CONTRACT_REWARD+420*orderIndex};
+}
+function deliverContract(s,orderIndex=0){
+ const order=contractFor(orderIndex);if(s.resources.parts<order.quantity)return false;
+ s.resources.parts-=order.quantity;addMoney(s,order.reward);s.reputation++;s.deliveries++;
+ s.log.unshift(`Заказ отгружен: ${order.quantity} деталей, +${order.reward} гаек и +1 репутация.`);s.log=s.log.slice(0,6);return true;
+}
 function typeName(k){return({mine:'рудник',smelter:'плавильный цех',workshop:'мехцех',power:'электростанция'})[k]||k;}
 function resourceName(k){return({ore:'руды',steel:'стали',parts:'деталей'})[k]||k;}
-const Game={FACTORY_COSTS,IDLE_MACHINES,CONTRACT_REWARD,BASE_PRICES,newGame,multiplier,tapPower,incomePerSecond,getCost,prices,powerCapacity,powerDemand,tick,buy,tap,sell,sellAll,deliverContract};
+const Game={FACTORY_COSTS,IDLE_MACHINES,CONTRACT_REWARD,BASE_PRICES,newGame,multiplier,tapPower,incomePerSecond,getCost,prices,powerCapacity,powerDemand,tick,buy,tap,sell,sellAll,contractFor,deliverContract};
 if(typeof module!=='undefined'&&module.exports)module.exports=Game;
 if(typeof window!=='undefined')window.IndustryGame=Game;
 })();
